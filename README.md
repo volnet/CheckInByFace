@@ -7,3 +7,7 @@
 It's a winform program for conference checkin. 
 
 You have to known who are they.
+
+# Demo
+
+![](designs/renderings/checkIn-ad.png)
