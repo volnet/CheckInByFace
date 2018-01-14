@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\GDIHelper.cs" />
+    <Compile Include="Helpers\UIHelper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -87,6 +89,7 @@
     <Content Include="UI\MainForm\background.png" />
     <Content Include="UI\MainForm\button-no.png" />
     <Content Include="UI\MainForm\button-yes.png" />
+    <Content Include="UI\MainForm\button-yes-2.png" />
     <Content Include="UI\MainForm\result-no.png" />
     <Content Include="UI\MainForm\result-yes.png" />
     <Content Include="UI\MainForm\head-frame.png" />
