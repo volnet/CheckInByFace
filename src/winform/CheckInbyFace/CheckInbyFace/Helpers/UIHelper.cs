@@ -37,23 +37,32 @@ namespace CheckInbyFace.Helpers
 
         #region FullScreen
 
-        public static void SwitchFullScreen(Form form)
+        public static bool SwitchFullScreen(Form form)
         {
             if (form == null)
-                return;
+                return false;
 
-            if (form.WindowState == FormWindowState.Maximized)
+            try
             {
-                Helpers.UIHelper.ShowTrayWnd();
-                form.FormBorderStyle = FormBorderStyle.Sizable;
-                form.WindowState = FormWindowState.Normal;
+                if (form.WindowState == FormWindowState.Maximized)
+                {
+                    Helpers.UIHelper.ShowTrayWnd();
+                    form.FormBorderStyle = FormBorderStyle.Sizable;
+                    form.WindowState = FormWindowState.Normal;
+                }
+                else if (form.WindowState == FormWindowState.Normal)
+                {
+                    Helpers.UIHelper.HideTrayWnd();
+                    form.FormBorderStyle = FormBorderStyle.None;
+                    form.WindowState = FormWindowState.Maximized;
+                }
             }
-            else if (form.WindowState == FormWindowState.Normal)
+            catch (Exception ex)
             {
-                Helpers.UIHelper.HideTrayWnd();
-                form.FormBorderStyle = FormBorderStyle.None;
-                form.WindowState = FormWindowState.Maximized;
+                Console.WriteLine(ex.ToString());
+                return false;
             }
+            return true;
         }
 
         #endregion
