@@ -52,27 +52,27 @@ namespace CheckInbyFace.Helpers.Tests
                 Assert.IsTrue(System.IO.File.Exists(image1Path));
                 Image image1 = Image.FromFile(image1Path);
                 Assert.IsNotNull(image1);
-
-                image1.Save(image1Path.Replace(".png", "-raw-OverlayImageTest.png"));
+                image1.Save(image1Path.Replace(".png", "-raw-OverlayImageTest.png"), System.Drawing.Imaging.ImageFormat.Png);
 
                 Assert.IsNotNull(string.IsNullOrEmpty(image2Path));
                 Assert.IsTrue(System.IO.File.Exists(image2Path));
                 Image image2 = Image.FromFile(image2Path);
                 Assert.IsNotNull(image2);
-                image2.Save(image2Path.Replace(".jpg", "-raw-OverlayImageTest.jpg"));
+                image2.Save(image2Path.Replace(".jpg", "-raw-OverlayImageTest.jpg"), System.Drawing.Imaging.ImageFormat.Jpeg);
 
-                int size = (int)(image1.Width * 0.7);
+                int size = (int)(Math.Min(image1.Width * 0.6, image2.Width));
                 Image newImage = Helpers.GDIHelper.CutEllipse(image2,
-                    new Rectangle(0, 0, 300, 300),
+                    new Rectangle(0, 0, size, size),
                     new Size(size, size));
                 Assert.IsNotNull(newImage);
+                newImage.Save(image2Path.Replace(".jpg", "-CutEllipse.png"), System.Drawing.Imaging.ImageFormat.Png);
 
-                Point location = new Point((image1.Width - image2.Width) / 2, (image1.Height - image2.Height) / 2);
-                Image newImage2 = Helpers.GDIHelper.OverlayImage(image1, newImage, location);
+                Point location = new Point((image1.Width - newImage.Width) / 2, (image1.Height - newImage.Height) / 2);
+                Image newImage2 = Helpers.GDIHelper.OverlayImage(image1, newImage, 1.0f, location);
                 Assert.IsNotNull(newImage2);
 
                 string newPath = image1Path.Replace(".png", "-OverlayImageTest.png");
-                newImage2.Save(newPath);
+                newImage2.Save(newPath, System.Drawing.Imaging.ImageFormat.Png);
                 Assert.IsNotNull(string.IsNullOrEmpty(newPath));
                 Assert.IsTrue(System.IO.File.Exists(newPath));
             }

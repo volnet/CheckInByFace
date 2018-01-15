@@ -20,6 +20,8 @@ namespace CheckInbyFaceTests.Objects
                 UserId = "user1",
                 UserName = "Eric User",
                 Mobile = "123456789",
+                Birthday = new DateTime(1960, 11, 11),
+                FirstCome = new DateTime(2010, 3, 20),
                 Title = "Boss1",
                 AvatarURI = "VP"
             };
@@ -29,6 +31,7 @@ namespace CheckInbyFaceTests.Objects
                 UserId = "user2",
                 UserName = "Frank User",
                 Mobile = "987654321",
+                Birthday = new DateTime(1961, 12, 12),
                 Title = "Boss2",
                 AvatarURI = "VP"
             };
