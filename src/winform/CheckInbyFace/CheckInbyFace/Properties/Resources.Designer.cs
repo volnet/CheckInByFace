@@ -75,7 +75,7 @@ namespace CheckInbyFace.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap button_no {
             get {
-                object obj = ResourceManager.GetObject("button-no", resourceCulture);
+                object obj = ResourceManager.GetObject("button_no", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -85,7 +85,7 @@ namespace CheckInbyFace.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap button_yes {
             get {
-                object obj = ResourceManager.GetObject("button-yes", resourceCulture);
+                object obj = ResourceManager.GetObject("button_yes", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -95,7 +95,7 @@ namespace CheckInbyFace.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap button_yes_2 {
             get {
-                object obj = ResourceManager.GetObject("button-yes-2", resourceCulture);
+                object obj = ResourceManager.GetObject("button_yes_2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -105,7 +105,7 @@ namespace CheckInbyFace.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap head_frame {
             get {
-                object obj = ResourceManager.GetObject("head-frame", resourceCulture);
+                object obj = ResourceManager.GetObject("head_frame", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -115,7 +115,7 @@ namespace CheckInbyFace.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap result_no {
             get {
-                object obj = ResourceManager.GetObject("result-no", resourceCulture);
+                object obj = ResourceManager.GetObject("result_no", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -125,7 +125,7 @@ namespace CheckInbyFace.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap result_yes {
             get {
-                object obj = ResourceManager.GetObject("result-yes", resourceCulture);
+                object obj = ResourceManager.GetObject("result_yes", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

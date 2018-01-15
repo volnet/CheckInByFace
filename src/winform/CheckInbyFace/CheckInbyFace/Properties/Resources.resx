@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="result-yes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="result_yes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\UI\MainForm\result-yes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="button-no" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="button_no" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\UI\MainForm\button-no.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="background" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\UI\MainForm\background.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="head-frame" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="head_frame" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\UI\MainForm\head-frame.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="button-yes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="button_yes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\UI\MainForm\button-yes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="result-no" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="result_no" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\UI\MainForm\result-no.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="button-yes-2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="button_yes_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ui\mainform\button-yes-2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
