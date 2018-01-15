@@ -12,12 +12,19 @@ namespace CheckInbyFace.Helpers
 {
     public class GDIHelper
     {
-        public static Image CutEllipse(Image img, Rectangle rec, Size size)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="rec">Cut Region</param>
+        /// <param name="size">Target Region</param>
+        /// <returns></returns>
+        public static Image CutEllipse(Image image, Rectangle rec, Size size)
         {
             Bitmap bitmap = new Bitmap(size.Width, size.Height);
             using (Graphics g = Graphics.FromImage(bitmap))
             {
-                using (TextureBrush br = new TextureBrush(img, System.Drawing.Drawing2D.WrapMode.Clamp, rec))
+                using (TextureBrush br = new TextureBrush(image, System.Drawing.Drawing2D.WrapMode.Clamp, rec))
                 {
                     br.ScaleTransform(bitmap.Width / (float)rec.Width, bitmap.Height / (float)rec.Height);
                     g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
@@ -25,58 +32,6 @@ namespace CheckInbyFace.Helpers
                 }
             }
             return bitmap;
-        }
-
-        /// <summary>
-        /// Overlay Image
-        /// </summary>
-        /// <param name="imageBackground"></param>
-        /// <param name="imageFront"></param>
-        /// <param name="imageFrontAlpha"></param>
-        /// <param name="location"></param>
-        /// <returns></returns>
-        public static Image OverlayImage(Image imageBackground, Image imageFront, float imageFrontAlpha, Point location)
-        {
-            if (imageBackground == null
-                || imageFront == null
-                || imageFrontAlpha == 0.0f)
-            {
-                return null;
-            }
-
-            Bitmap bmPhoto = new Bitmap(imageBackground.Width, imageBackground.Height, PixelFormat.Format24bppRgb);
-            bmPhoto.SetResolution(imageBackground.HorizontalResolution, imageBackground.VerticalResolution);
-
-            using (Graphics grPhoto = Graphics.FromImage(bmPhoto))
-            {
-                grPhoto.SmoothingMode = SmoothingMode.AntiAlias;
-                grPhoto.DrawImage(imageBackground,
-                  new Rectangle(0, 0, imageBackground.Width, imageBackground.Height),
-                  0,
-                  0,
-                  imageBackground.Width,
-                  imageBackground.Height,
-                  GraphicsUnit.Pixel);
-            }
-
-            Bitmap bmWatermark = new Bitmap(bmPhoto);
-            bmWatermark.SetResolution(imageBackground.HorizontalResolution, imageBackground.VerticalResolution);
-
-            using (Graphics grWatermark = Graphics.FromImage(bmWatermark))
-            {
-                grWatermark.DrawImage(imageFront,
-                    new Rectangle(location.X,
-                                    location.Y,
-                                    imageFront.Width,
-                                    imageFront.Height),
-                    0,
-                    0,
-                    imageFront.Width,
-                    imageFront.Height,
-                    GraphicsUnit.Pixel);
-            }
-
-            return bmWatermark;
         }
 
         public static Image Layout(Image image, Size size, ImageLayout layout)
@@ -132,6 +87,73 @@ namespace CheckInbyFace.Helpers
             }
 
             return bitmap;
+        }
+
+        /// <summary>
+        /// Overlay Image
+        /// </summary>
+        /// <param name="imageBackground"></param>
+        /// <param name="imageFront"></param>
+        /// <param name="imageFrontAlpha"></param>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        public static Image OverlayImage(Image imageBackground, Image imageFront, float imageFrontAlpha, Point location)
+        {
+            if (imageBackground == null
+                || imageFront == null
+                || imageFrontAlpha == 0.0f)
+            {
+                return null;
+            }
+
+            Bitmap bmPhoto = new Bitmap(imageBackground.Width, imageBackground.Height, PixelFormat.Format24bppRgb);
+            bmPhoto.SetResolution(imageBackground.HorizontalResolution, imageBackground.VerticalResolution);
+
+            using (Graphics grPhoto = Graphics.FromImage(bmPhoto))
+            {
+                grPhoto.SmoothingMode = SmoothingMode.AntiAlias;
+                grPhoto.DrawImage(imageBackground,
+                  new Rectangle(0, 0, imageBackground.Width, imageBackground.Height),
+                  0,
+                  0,
+                  imageBackground.Width,
+                  imageBackground.Height,
+                  GraphicsUnit.Pixel);
+            }
+
+            Bitmap bmWatermark = new Bitmap(bmPhoto);
+            bmWatermark.SetResolution(imageBackground.HorizontalResolution, imageBackground.VerticalResolution);
+
+            using (Graphics grWatermark = Graphics.FromImage(bmWatermark))
+            {
+                grWatermark.DrawImage(imageFront,
+                    new Rectangle(location.X,
+                                    location.Y,
+                                    imageFront.Width,
+                                    imageFront.Height),
+                    0,
+                    0,
+                    imageFront.Width,
+                    imageFront.Height,
+                    GraphicsUnit.Pixel);
+            }
+
+            return bmWatermark;
+        }
+
+        public static Image OverlayImageWithCutEllipse(Image imageBackground,
+            Image imageFront, Rectangle imageFrontCutRect, float imageFrontAlpha, Point originalLocation, Size originalImageFrontTargetSize, Size targetSize)
+        {
+            if (imageBackground == null || imageFront == null)
+            {
+                throw new ArgumentNullException("imageBackground == null || imageFront == null");
+            }
+
+            Image cutImageFront = CutEllipse(imageFront, imageFrontCutRect, originalImageFrontTargetSize);
+            Image overlayImage = OverlayImage(imageBackground, cutImageFront, imageFrontAlpha, originalLocation);
+            Image result = Layout(overlayImage, targetSize, ImageLayout.Zoom);
+
+            return result;
         }
     }
 }
