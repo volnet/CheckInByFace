@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace CheckInbyFace.Helpers
 {
@@ -26,7 +27,14 @@ namespace CheckInbyFace.Helpers
             return bitmap;
         }
 
-        // !error!
+        /// <summary>
+        /// Overlay Image
+        /// </summary>
+        /// <param name="imageBackground"></param>
+        /// <param name="imageFront"></param>
+        /// <param name="imageFrontAlpha"></param>
+        /// <param name="location"></param>
+        /// <returns></returns>
         public static Image OverlayImage(Image imageBackground, Image imageFront, float imageFrontAlpha, Point location)
         {
             if (imageBackground == null
@@ -69,6 +77,61 @@ namespace CheckInbyFace.Helpers
             }
 
             return bmWatermark;
+        }
+
+        public static Image Layout(Image image, Size size, ImageLayout layout)
+        {
+            if (image == null)
+            {
+                return null;
+            }
+            Bitmap bitmap = new Bitmap(size.Width, size.Height);
+            Graphics g = Graphics.FromImage(bitmap);
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            if (layout == ImageLayout.None)
+            {
+                g.DrawImageUnscaled(image, Point.Empty);
+            }
+            else if (layout == ImageLayout.Tile)
+            {
+                int x = 0, y = 0;
+                while (y < size.Height)
+                {
+                    g.DrawImageUnscaled(image, new Point(x, y));
+                    x += image.Width;
+                    if (x >= size.Width)
+                    {
+                        x = 0;
+                        y += image.Height;
+                    }
+                }
+            }
+            else if (layout == ImageLayout.Zoom)
+            {
+                float scaleX = size.Width * 1.0F / image.Width;
+                float scaleY = size.Height * 1.0F / image.Height;
+                RectangleF rectF = new RectangleF();
+                if (scaleX < scaleY)
+                {
+                    rectF.Width = image.Width * scaleX;
+                    rectF.Height = image.Height * scaleX;
+                }
+                else
+                {
+                    rectF.Width = image.Width * scaleY;
+                    rectF.Height = image.Height * scaleY;
+                }
+                rectF.X = (size.Width - rectF.Width) / 2.0F;
+                rectF.Y = (size.Height - rectF.Height) / 2.0F;
+                g.DrawImage(image, rectF);
+            }
+            else if (layout == ImageLayout.Stretch)
+            {
+                g.DrawImage(image, new Rectangle(Point.Empty, size));
+            }
+
+            return bitmap;
         }
     }
 }

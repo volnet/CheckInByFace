@@ -81,5 +81,44 @@ namespace CheckInbyFace.Helpers.Tests
                 Assert.Fail(ex.ToString());
             }
         }
+
+        [TestMethod()]
+        public void LayoutTest()
+        {
+            try
+            {
+                string image1Path = AppDomain.CurrentDomain.BaseDirectory + @"\UI\demo.jpg";
+                Assert.IsNotNull(string.IsNullOrEmpty(image1Path));
+                Assert.IsTrue(System.IO.File.Exists(image1Path));
+                Image image1 = Image.FromFile(image1Path);
+                Assert.IsNotNull(image1);
+
+                Image imageNone = GDIHelper.Layout(image1, new Size(1000, 1000), System.Windows.Forms.ImageLayout.None);
+                Image imageTile = GDIHelper.Layout(image1, new Size(1000, 1000), System.Windows.Forms.ImageLayout.Tile);
+                Image imageCenter = GDIHelper.Layout(image1, new Size(1000, 1000), System.Windows.Forms.ImageLayout.Center);
+                Image imageZoom = GDIHelper.Layout(image1, new Size(1000, 1000), System.Windows.Forms.ImageLayout.Zoom);
+                Image imageStretch = GDIHelper.Layout(image1, new Size(1000, 1000), System.Windows.Forms.ImageLayout.Stretch);
+                
+                Image imageTile2 = GDIHelper.Layout(image1, new Size(100, 100), System.Windows.Forms.ImageLayout.Tile);
+                Image imageCenter2 = GDIHelper.Layout(image1, new Size(100, 100), System.Windows.Forms.ImageLayout.Center);
+                Image imageZoom2 = GDIHelper.Layout(image1, new Size(100, 100), System.Windows.Forms.ImageLayout.Zoom);
+                Image imageStretch2 = GDIHelper.Layout(image1, new Size(100, 100), System.Windows.Forms.ImageLayout.Stretch);
+
+                string folderPath = AppDomain.CurrentDomain.BaseDirectory + @"\UI\";
+                imageNone.Save(folderPath + "LayoutTest_imageNone.png", System.Drawing.Imaging.ImageFormat.Png);
+                imageTile.Save(folderPath + "LayoutTest_imageTile.png", System.Drawing.Imaging.ImageFormat.Png);
+                imageCenter.Save(folderPath + "LayoutTest_imageCenter.png", System.Drawing.Imaging.ImageFormat.Png);
+                imageZoom.Save(folderPath + "LayoutTest_imageZoom.png", System.Drawing.Imaging.ImageFormat.Png);
+                imageStretch.Save(folderPath + "LayoutTest_imageStretch.png", System.Drawing.Imaging.ImageFormat.Png);
+                imageTile2.Save(folderPath + "LayoutTest_imageTile2.png", System.Drawing.Imaging.ImageFormat.Png);
+                imageCenter2.Save(folderPath + "LayoutTest_imageCenter2.png", System.Drawing.Imaging.ImageFormat.Png);
+                imageZoom2.Save(folderPath + "LayoutTest_imageZoom2.png", System.Drawing.Imaging.ImageFormat.Png);
+                imageStretch2.Save(folderPath + "LayoutTest_imageStretch2.png", System.Drawing.Imaging.ImageFormat.Png);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.ToString());
+            }
+        }
     }
 }
