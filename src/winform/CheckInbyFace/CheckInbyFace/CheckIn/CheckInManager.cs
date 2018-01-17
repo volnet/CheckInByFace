@@ -18,6 +18,7 @@ namespace CheckInbyFace.CheckIn
         }
         private List<User> _users = null;
         private const string CHECKIN_LIST_FILE = @"Data\users.json";
+        private const string CHECKIN_RESULT_FILE = @"Data\checkin-result.json";
         private string _checkInListFileFullPath = string.Empty;
         private string CheckInListFileFullPath
         {
@@ -126,7 +127,7 @@ namespace CheckInbyFace.CheckIn
                 if (_userCheckInList != null)
                 {
                     string json = JsonConvert.SerializeObject(_userCheckInList, Formatting.Indented);
-                    System.IO.File.WriteAllText(@"Data\checkin-result.json", json, Encoding.UTF8);
+                    System.IO.File.WriteAllText(CHECKIN_RESULT_FILE, json, Encoding.UTF8);
                     return true;
                 }
             }
