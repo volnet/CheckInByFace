@@ -1,0 +1,22 @@
+[
+  {
+    "UserId": "user1",
+    "UserName": "Eric User",
+    "Birthday": "1960-11-11T00:00:00",
+    "FirstCome": "2010-03-20T00:00:00",
+    "Mobile": "123456789",
+    "Title": "Boss1",
+    "Remark": null,
+    "AvatarURI": "VP"
+  },
+  {
+    "UserId": "user2",
+    "UserName": "Frank User",
+    "Birthday": "1961-12-12T00:00:00",
+    "FirstCome": "0001-01-01T00:00:00",
+    "Mobile": "987654321",
+    "Title": "Boss2",
+    "Remark": null,
+    "AvatarURI": "VP"
+  }
+]

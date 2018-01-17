@@ -85,12 +85,16 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="CheckIn\CheckInManagerTests.cs" />
     <Compile Include="Helpers\GDIHelperTests.cs" />
     <Compile Include="Objects\UserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PythonTest\Test.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\users.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
