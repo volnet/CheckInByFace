@@ -11,7 +11,7 @@ namespace CheckInbyFace.Objects
     {
         public string UserId { get; set; }
         public string UserName { get; set; }
-        public SexTypes Sex { get; set; }
+        public GenderTypes Gender { get; set; }
         public DateTime Birthday { get; set; }
         public DateTime FirstCome { get; set; }
         public string Mobile { get; set; }
@@ -19,10 +19,11 @@ namespace CheckInbyFace.Objects
         public string Remark { get; set; }
         public string AvatarURI { get; set; }
     
-        public enum SexTypes
+        public enum GenderTypes
         {
-            Male,
-            Female
+            Unknown = 0,
+            Male = 1,
+            Female = 2
         }
     }
 }
