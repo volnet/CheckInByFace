@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CheckInbyFace.Configs;
+using System.IO;
 
 namespace CheckInbyFace
 {
@@ -36,7 +38,7 @@ namespace CheckInbyFace
 
         private const int SCREEN_WIDTH = 1920;
         private const int SCREEN_HEIGHT = 1080;
-        
+
         private void MainForm_Resize(object sender, EventArgs e)
         {
             Size delta = this.pictureBoxBackground.ClientSize - this.pictureBoxHeadFrame.ClientSize;
@@ -125,6 +127,53 @@ namespace CheckInbyFace
         private void pictureBoxButtonYes_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void timerForFaceDetect_Tick(object sender, EventArgs e)
+        {
+            string dataCommunicateMode = Configs.ConfigManager.DataCommunicateMode;
+            string jsonFileFullPath = Configs.ConfigManager.DataCommunicateModeFileFileFullPath;
+            string frameFileFullPath = Configs.ConfigManager.DataCommunicateFrameFileFullPath;
+        }
+
+        public static Tuple<CheckInbyFace.Objects.FaceDetectInfos, MemoryStream> GetFaceDetectInfos(
+            string dataCommunicateMode,
+            string jsonFileFullPath,
+            string frameFileFullPath)
+        {
+            if (dataCommunicateMode == "File")
+            {
+                CheckInbyFace.Objects.FaceDetectInfos fdis = null;
+
+                try
+                {
+                    string json = System.IO.File.ReadAllText(jsonFileFullPath);
+                    fdis = Newtonsoft.Json.JsonConvert.DeserializeObject<CheckInbyFace.Objects.FaceDetectInfos>(json);
+                }
+                catch (Exception ex)
+                {
+                    fdis = null;
+                    System.Diagnostics.Trace.WriteLine(ex.ToString());
+                }
+
+                MemoryStream ms = null;
+                try
+                {
+                    byte[] buffer = System.IO.File.ReadAllBytes(frameFileFullPath);
+                    ms = new MemoryStream(buffer);
+                }
+                catch (Exception ex)
+                {
+                    ms = null;
+                    System.Diagnostics.Trace.WriteLine(ex.ToString());
+                }
+
+                if (fdis != null && ms != null)
+                {
+                    return new Tuple<Objects.FaceDetectInfos, MemoryStream>(fdis, ms);
+                }
+            }
+            return null;
         }
     }
 }

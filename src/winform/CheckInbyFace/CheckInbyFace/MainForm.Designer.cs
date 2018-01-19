@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.pictureBoxBackground = new System.Windows.Forms.PictureBox();
             this.pictureBoxHeadFrame = new System.Windows.Forms.PictureBox();
@@ -41,6 +42,7 @@
             this.labelCheckinCount = new System.Windows.Forms.Label();
             this.labelUserName = new System.Windows.Forms.Label();
             this.pictureBoxButtonYes2 = new System.Windows.Forms.PictureBox();
+            this.timerForFaceDetect = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBackground)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHeadFrame)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxButtonYes)).BeginInit();
@@ -195,6 +197,10 @@
             this.pictureBoxButtonYes2.TabStop = false;
             this.pictureBoxButtonYes2.Click += new System.EventHandler(this.pictureBoxButtonYes2_Click);
             // 
+            // timerForFaceDetect
+            // 
+            this.timerForFaceDetect.Tick += new System.EventHandler(this.timerForFaceDetect_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
@@ -246,6 +252,7 @@
         private System.Windows.Forms.Label labelCheckinCount;
         private System.Windows.Forms.Label labelUserName;
         private System.Windows.Forms.PictureBox pictureBoxButtonYes2;
+        private System.Windows.Forms.Timer timerForFaceDetect;
     }
 }
 
