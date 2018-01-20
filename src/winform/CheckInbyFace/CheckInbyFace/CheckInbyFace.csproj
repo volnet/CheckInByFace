@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheckIn\CheckInManager.cs" />
+    <Compile Include="CheckIn\FaceDetector.cs" />
     <Compile Include="Configs\ConfigManager.cs" />
     <Compile Include="Helpers\GDIHelper.cs" />
     <Compile Include="Helpers\UIHelper.cs" />

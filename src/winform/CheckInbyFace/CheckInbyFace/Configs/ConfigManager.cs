@@ -44,26 +44,5 @@ namespace CheckInbyFace.Configs
                 return _dataCommunicateModeFileFileFullPath;
             }
         }
-
-        private static string DataCommunicateFrameFilePath
-        {
-            get
-            {
-                return GetAppSetting("DataCommunicateFrame.FilePath");
-            }
-        }
-
-        private static string _dataCommunicateFrameFileFullPath = null;
-        public static string DataCommunicateFrameFileFullPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_dataCommunicateFrameFileFullPath))
-                {
-                    _dataCommunicateFrameFileFullPath = System.IO.Path.GetFullPath(DataCommunicateFrameFilePath);
-                }
-                return _dataCommunicateFrameFileFullPath;
-            }
-        }
     }
 }

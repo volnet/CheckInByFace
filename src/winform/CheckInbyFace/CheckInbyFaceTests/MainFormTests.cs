@@ -51,10 +51,9 @@ namespace CheckInbyFace.Tests
                 try
                 {
                     System.Diagnostics.Trace.Write("Read data " + (++count).ToString() + " times.");
-                    var result = MainForm.GetFaceDetectInfos(
+                    var result = CheckInbyFace.CheckIn.FaceDetector.GetFaceDetectInfos(
                        "File",
-                       jsonFileFullPath,
-                       frameFileFullPath
+                       jsonFileFullPath
                     );
                     if (result == null)
                     {
@@ -63,9 +62,8 @@ namespace CheckInbyFace.Tests
                     }
                     else
                     {
-                        Assert.IsNotNull(result.Item1);
-                        Assert.IsNotNull(result.Item2);
-                        Assert.IsTrue(result.Item2.Length > 0);
+                        Assert.IsNotNull(result.Faces);
+                        Assert.IsTrue(result.Faces.Count > 0);
                         ++successCount;
                         System.Diagnostics.Trace.WriteLine("++successCount;");
                     }

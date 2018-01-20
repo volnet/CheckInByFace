@@ -46,6 +46,13 @@ namespace CheckInbyFace.CheckIn
         }
 
         private UserCheckInList _userCheckInList = null;
+        public UserCheckInList UserCheckInList
+        {
+            get
+            {
+                return _userCheckInList;
+            }
+        }
         private void ConvertToUserCheckInList()
         {
             if (_users != null)
@@ -97,7 +104,12 @@ namespace CheckInbyFace.CheckIn
             }
         }
 
-        public CheckInStatusTypes CheckIn(string userId)
+        private int _checkInByAdmin = 0;
+        private int _checkInByAI = 0;
+        public int CheckInByAdmin { get { return _checkInByAdmin; } }
+        public int CheckInByAI { get { return _checkInByAI; } }
+
+        public CheckInStatusTypes CheckIn(string userId, bool checkInByAI)
         {
             if (!_userCheckInList.ContainsKey(userId))
             {
@@ -110,6 +122,16 @@ namespace CheckInbyFace.CheckIn
                     UserCheckIn user = _userCheckInList[userId];
                     user.CheckInDateTime = DateTime.Now;
                     user.CheckInStatus = true;
+
+                    if (checkInByAI)
+                    {
+                        ++_checkInByAI;
+                    }
+                    else
+                    {
+                        ++_checkInByAdmin;
+                    }
+
                     return CheckInStatusTypes.Success;
                 }
                 catch (Exception ex)
@@ -117,6 +139,26 @@ namespace CheckInbyFace.CheckIn
                     _logger.Error(ex, userId + " checkin with exception");
                     return CheckInStatusTypes.Failure;
                 }
+            }
+        }
+
+        public float CheckInByAdminPercent
+        {
+            get
+            {
+                return ((float)CheckInByAdmin / (float)TotalCount * 100);
+            }
+        }
+
+        public float CheckInByAIPercent
+        {
+            get
+            {
+                if (TotalCount == 0)
+                {
+                    return 0;
+                }
+                return 100 - CheckInByAdminPercent;
             }
         }
 

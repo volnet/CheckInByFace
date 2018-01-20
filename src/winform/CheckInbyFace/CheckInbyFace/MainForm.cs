@@ -16,6 +16,7 @@ namespace CheckInbyFace
 {
     public partial class MainForm : Form
     {
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         public MainForm()
         {
             InitializeComponent();
@@ -24,8 +25,49 @@ namespace CheckInbyFace
 
         private void InitUI()
         {
-            TextBoxUserNameVisable(false);
             Helpers.UIHelper.SwitchFullScreen(this);
+            TextBoxUserNameVisable(false);
+            RefreshValues2UI();
+            timerForFaceDetect.Start();
+        }
+
+        private CheckIn.CheckInManager _checkInManager = new CheckIn.CheckInManager();
+        private CheckIn.FaceDetector _faceDetector = new CheckIn.FaceDetector();
+
+        private void RefreshValues2UI()
+        {
+            string checkInCount = string.Format("{0}/{1}", _checkInManager.CheckInCount, _checkInManager.TotalCount);
+            string resultNo = _checkInManager.CheckInByAdminPercent.ToString("0.00") + "%";
+            string resultYes = _checkInManager.CheckInByAIPercent.ToString("0.00") + "%";
+
+            labelResultNo.Text = resultNo;
+            labelResultYes.Text = resultYes;
+            labelCheckinCount.Text = checkInCount;
+        }
+
+        private void RefreshFace2UI()
+        {
+            var fdis = _faceDetector.Read();
+            if (fdis != null 
+                && fdis.Faces != null && fdis.Faces.Count > 0)
+            {
+                var face = fdis.Faces[0];
+                string userId = face.UserId;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    var user = face.RestoreUser(_checkInManager.UserCheckInList);
+                    if (user != null)
+                    {
+                        labelUserName.Text = string.Format("{0}({1})", user.UserName, user.UserId);
+                        ResizeLabelUserName();
+
+                        if (System.IO.File.Exists(face.ImagePath))
+                        {
+                            pictureBoxHeadFrame.Image = Image.FromFile(face.ImagePath);
+                        }
+                    }
+                }
+            }
         }
 
         private void TextBoxUserNameVisable(bool visable)
@@ -67,10 +109,10 @@ namespace CheckInbyFace
             this.pictureBoxButtonYes2.Top = this.textBoxUserName.Top + 6;
 
             ResizeLabelUserName();
-            ResizeLabelCheckinCount();
+            ResizeLabelCheckInCount();
         }
 
-        private void ResizeLabelCheckinCount()
+        private void ResizeLabelCheckInCount()
         {
             this.labelCheckinCount.Top = Math.Max(this.pictureBoxHeadFrame.Bottom, this.pictureBoxButtonNo.Bottom);
             this.labelCheckinCount.Left = this.pictureBoxHeadFrame.Left + this.pictureBoxHeadFrame.ClientSize.Width / 2 - this.labelCheckinCount.ClientSize.Width / 2;
@@ -131,49 +173,7 @@ namespace CheckInbyFace
 
         private void timerForFaceDetect_Tick(object sender, EventArgs e)
         {
-            string dataCommunicateMode = Configs.ConfigManager.DataCommunicateMode;
-            string jsonFileFullPath = Configs.ConfigManager.DataCommunicateModeFileFileFullPath;
-            string frameFileFullPath = Configs.ConfigManager.DataCommunicateFrameFileFullPath;
-        }
-
-        public static Tuple<CheckInbyFace.Objects.FaceDetectInfos, MemoryStream> GetFaceDetectInfos(
-            string dataCommunicateMode,
-            string jsonFileFullPath,
-            string frameFileFullPath)
-        {
-            if (dataCommunicateMode == "File")
-            {
-                CheckInbyFace.Objects.FaceDetectInfos fdis = null;
-
-                try
-                {
-                    string json = System.IO.File.ReadAllText(jsonFileFullPath);
-                    fdis = Newtonsoft.Json.JsonConvert.DeserializeObject<CheckInbyFace.Objects.FaceDetectInfos>(json);
-                }
-                catch (Exception ex)
-                {
-                    fdis = null;
-                    System.Diagnostics.Trace.WriteLine(ex.ToString());
-                }
-
-                MemoryStream ms = null;
-                try
-                {
-                    byte[] buffer = System.IO.File.ReadAllBytes(frameFileFullPath);
-                    ms = new MemoryStream(buffer);
-                }
-                catch (Exception ex)
-                {
-                    ms = null;
-                    System.Diagnostics.Trace.WriteLine(ex.ToString());
-                }
-
-                if (fdis != null && ms != null)
-                {
-                    return new Tuple<Objects.FaceDetectInfos, MemoryStream>(fdis, ms);
-                }
-            }
-            return null;
+            RefreshFace2UI();
         }
     }
 }

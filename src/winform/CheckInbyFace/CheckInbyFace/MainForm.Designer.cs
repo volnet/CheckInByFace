@@ -174,6 +174,7 @@
             // 
             // labelUserName
             // 
+            this.labelUserName.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.labelUserName.AutoSize = true;
             this.labelUserName.BackColor = System.Drawing.Color.Transparent;
             this.labelUserName.Font = new System.Drawing.Font("微软雅黑", 32.125F, System.Drawing.FontStyle.Bold);
@@ -199,6 +200,7 @@
             // 
             // timerForFaceDetect
             // 
+            this.timerForFaceDetect.Interval = 500;
             this.timerForFaceDetect.Tick += new System.EventHandler(this.timerForFaceDetect_Tick);
             // 
             // MainForm

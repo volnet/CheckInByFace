@@ -36,9 +36,14 @@ namespace CheckInbyFace.TestFrameGenerator
                     {
                         int.TryParse(args[1], out minutes);
                         folderPath = args[2];
+                        _logger.Debug("CommunicateByFile(\"" + minutes.ToString() + "\", \"" + folderPath + "\")");
+                        CommunicateByFile(minutes, folderPath);
                     }
-                    _logger.Debug("CommunicateByFile(\"" + minutes.ToString() + "\", \"" + folderPath + "\")");
-                    CommunicateByFile(minutes, folderPath);
+                    else
+                    {
+                        _logger.Debug("CommunicateByFile(\"" + minutes.ToString() + "\")");
+                        CommunicateByFile(minutes);
+                    }
                 }
             }
             catch (Exception ex)
@@ -54,44 +59,56 @@ namespace CheckInbyFace.TestFrameGenerator
         static void CommunicateByFile(int minutes, string folderPath = @"../../../../../data/public/samples/")
         {
             string jsonFilePath = System.IO.Path.GetFullPath(folderPath + "faceDetectInfos.json");
-            string frameFilePath = System.IO.Path.GetFullPath(folderPath + "frame.jpg");
+            string frameTemplatePath = System.IO.Path.GetFullPath(folderPath + "frame{No}.jpg");
+            string frameFilePath = string.Empty;
             string demoFrameFilePath = AppDomain.CurrentDomain.BaseDirectory + @"demo/frame.jpg";
 
             Random r = new Random(DateTime.Now.Millisecond);
             DateTime end = DateTime.Now.AddMinutes(minutes);
+            int i = 0;
             while (DateTime.Now < end)
             {
+                if (i > 10000)
+                {
+                    i = 0;
+                }
+                else
+                {
+                    ++i;
+                }
                 try
                 {
                     int x = r.Next(0, 200);
                     int y = r.Next(0, 200);
                     int width = r.Next(100, 200);
                     int height = r.Next(100, 200);
-
-                    FaceDetectInfos fdis = new FaceDetectInfos();
-                    fdis.Faces.Add(new FaceDetectInfos.FaceDetectInfo()
-                    {
-                        UserId = "user1",
-                        X = x,
-                        Y = y,
-                        Width = width,
-                        Height = height
-                    });
-
-                    string json = JsonConvert.SerializeObject(fdis, Formatting.Indented);
-                    System.IO.File.WriteAllText(jsonFilePath, json);
-
-                    Console.WriteLine(jsonFilePath + " created.");
-
+                    
                     if (!System.IO.File.Exists(demoFrameFilePath))
                     {
                         _logger.Debug(demoFrameFilePath + " not exist.");
                     }
                     else
                     {
+                        frameFilePath = frameTemplatePath.Replace("{No}", i.ToString());
                         System.IO.File.Copy(demoFrameFilePath, frameFilePath, true);
                         _logger.Debug(frameFilePath + " created.");
                     }
+
+                    FaceDetectInfos fdis = new FaceDetectInfos();
+                    fdis.Faces.Add(new FaceDetectInfos.FaceDetectInfo()
+                    {
+                        UserId = "user" + (i % 3).ToString(),
+                        X = x,
+                        Y = y,
+                        Width = width,
+                        Height = height,
+                        ImagePath = frameFilePath
+                    });
+
+                    string json = JsonConvert.SerializeObject(fdis, Formatting.Indented);
+                    System.IO.File.WriteAllText(jsonFilePath, json);
+
+                    Console.WriteLine(jsonFilePath + " created.");
                 }
                 catch (Exception ex)
                 {
