@@ -42,6 +42,7 @@ namespace CheckInbyFace.Tests
             DateTime end = DateTime.Now.AddMinutes(1);
             int emptyCount = 0;
             int successCount = 0;
+            int errorCount = 0;
             int count = 0;
             string jsonFileFullPath = System.IO.Path.GetFullPath(@"../../../../../data/public/samples/faceDetectInfos.json");
             string frameFileFullPath = System.IO.Path.GetFullPath(@"../../../../../data/public/samples/frame.jpg");
@@ -71,9 +72,11 @@ namespace CheckInbyFace.Tests
                 }
                 catch (Exception ex)
                 {
+                    ++errorCount;
                     System.Diagnostics.Trace.WriteLine(ex.ToString());
                 }
             }
+            System.Diagnostics.Trace.WriteLine(string.Format("emptyCount = {0} / successCount = {1} / errorCount = {2}", emptyCount, successCount, errorCount));
             //}));
             //thread1.Start();
             //thread2.Start();

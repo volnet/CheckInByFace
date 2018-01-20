@@ -61,35 +61,41 @@ namespace CheckInbyFace.TestFrameGenerator
             DateTime end = DateTime.Now.AddMinutes(minutes);
             while (DateTime.Now < end)
             {
-                int x = r.Next(0, 200);
-                int y = r.Next(0, 200);
-                int width = r.Next(100, 200);
-                int height = r.Next(100, 200);
-
-                FaceDetectInfos fdis = new FaceDetectInfos();
-                fdis.Faces.Add(new FaceDetectInfos.FaceDetectInfo()
+                try
                 {
-                    UserId = "user1",
-                    X = x,
-                    Y = y,
-                    Width = width,
-                    Height = height
-                });
-                string json = JsonConvert.SerializeObject(fdis, Formatting.Indented);
-                System.IO.File.WriteAllText(jsonFilePath, json);
+                    int x = r.Next(0, 200);
+                    int y = r.Next(0, 200);
+                    int width = r.Next(100, 200);
+                    int height = r.Next(100, 200);
 
-                Console.WriteLine(jsonFilePath + " created.");
+                    FaceDetectInfos fdis = new FaceDetectInfos();
+                    fdis.Faces.Add(new FaceDetectInfos.FaceDetectInfo()
+                    {
+                        UserId = "user1",
+                        X = x,
+                        Y = y,
+                        Width = width,
+                        Height = height
+                    });
 
-                if (!System.IO.File.Exists(demoFrameFilePath))
-                {
-                    Console.WriteLine(demoFrameFilePath + " not exist.");
-                    _logger.Debug(demoFrameFilePath + " not exist.");
+                    string json = JsonConvert.SerializeObject(fdis, Formatting.Indented);
+                    System.IO.File.WriteAllText(jsonFilePath, json);
+
+                    Console.WriteLine(jsonFilePath + " created.");
+
+                    if (!System.IO.File.Exists(demoFrameFilePath))
+                    {
+                        _logger.Debug(demoFrameFilePath + " not exist.");
+                    }
+                    else
+                    {
+                        System.IO.File.Copy(demoFrameFilePath, frameFilePath, true);
+                        _logger.Debug(frameFilePath + " created.");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    System.IO.File.Copy(demoFrameFilePath, frameFilePath, true);
-                    Console.WriteLine(frameFilePath + " created.");
-                    _logger.Debug(frameFilePath + " created.");
+                    _logger.Debug(ex.ToString());
                 }
             }
         }
