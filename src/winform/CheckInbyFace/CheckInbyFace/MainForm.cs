@@ -26,13 +26,15 @@ namespace CheckInbyFace
         private void InitUI()
         {
             Helpers.UIHelper.SwitchFullScreen(this);
-            TextBoxUserNameVisable(false);
+            TextBoxUserIdOrUserNameVisable(false);
             RefreshValues2UI();
+            ResetLabelResult();
             timerForFaceDetect.Start();
         }
 
         private CheckIn.CheckInManager _checkInManager = new CheckIn.CheckInManager();
         private CheckIn.FaceDetector _faceDetector = new CheckIn.FaceDetector();
+        private DateTime labelResultShowDateTime = DateTime.MinValue;
 
         private void RefreshValues2UI()
         {
@@ -70,12 +72,45 @@ namespace CheckInbyFace
             }
         }
 
-        private void TextBoxUserNameVisable(bool visable)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="status">0:success, 1:error, 2:normal, 3:warning</param>
+        private void SetLabelResult(string text, int status)
         {
-            this.textBoxUserName.Visible = visable;
+            if (status == 0)
+            {
+                labelResult.ForeColor = Color.Green;
+            }
+            else if (status == 1)
+            {
+                labelResult.ForeColor = Color.Red;
+            }
+            else if (status == 2)
+            {
+                labelResult.ForeColor = Color.White;
+            }
+            else if (status == 3)
+            {
+                labelResult.ForeColor = Color.Orange;
+            }
+            labelResultShowDateTime = DateTime.Now;
+            labelResult.Text = text;
+        }
+
+        private void ResetLabelResult()
+        {
+            labelResult.Text = string.Empty;
+        }
+
+        private void TextBoxUserIdOrUserNameVisable(bool visable)
+        {
+            this.textBoxUserIdOrUserName.Visible = visable;
             this.pictureBoxButtonYes2.Visible = visable;
 
             this.labelUserName.Visible = !visable;
+            this.pictureBoxButtonYes.Enabled = !visable;
         }
 
         private const int SCREEN_WIDTH = 1920;
@@ -99,14 +134,14 @@ namespace CheckInbyFace
             this.pictureBoxButtonYes.Top = this.pictureBoxHeadFrame.Bottom;
             this.pictureBoxButtonYes.Left = this.pictureBoxHeadFrame.Right + this.pictureBoxButtonYes.ClientSize.Width;
 
-            this.textBoxUserName.Top = Math.Max(this.pictureBoxHeadFrame.Bottom,
-                this.pictureBoxButtonNo.Top + (this.pictureBoxButtonNo.ClientSize.Height - this.textBoxUserName.Height) / 2);
-            this.textBoxUserName.Left = this.pictureBoxHeadFrame.Left + this.pictureBoxHeadFrame.ClientSize.Width / 2 - this.textBoxUserName.ClientSize.Width / 2;
+            this.textBoxUserIdOrUserName.Top = Math.Max(this.pictureBoxHeadFrame.Bottom,
+                this.pictureBoxButtonNo.Top + (this.pictureBoxButtonNo.ClientSize.Height - this.textBoxUserIdOrUserName.Height) / 2);
+            this.textBoxUserIdOrUserName.Left = this.pictureBoxHeadFrame.Left + this.pictureBoxHeadFrame.ClientSize.Width / 2 - this.textBoxUserIdOrUserName.ClientSize.Width / 2;
 
-            this.pictureBoxButtonYes2.Width = this.textBoxUserName.Height - 12;
-            this.pictureBoxButtonYes2.Height = this.textBoxUserName.Height - 12;
-            this.pictureBoxButtonYes2.Left = this.textBoxUserName.Right - this.pictureBoxButtonYes2.Width - 6;
-            this.pictureBoxButtonYes2.Top = this.textBoxUserName.Top + 6;
+            this.pictureBoxButtonYes2.Width = this.textBoxUserIdOrUserName.Height - 12;
+            this.pictureBoxButtonYes2.Height = this.textBoxUserIdOrUserName.Height - 12;
+            this.pictureBoxButtonYes2.Left = this.textBoxUserIdOrUserName.Right - this.pictureBoxButtonYes2.Width - 6;
+            this.pictureBoxButtonYes2.Top = this.textBoxUserIdOrUserName.Top + 6;
 
             ResizeLabelUserName();
             ResizeLabelCheckInCount();
@@ -153,27 +188,71 @@ namespace CheckInbyFace
 
         private void pictureBoxButtonNo_Click(object sender, EventArgs e)
         {
-            TextBoxUserNameVisable(true);
+            TextBoxUserIdOrUserNameVisable(true);
         }
 
         private void pictureBoxButtonYes2_Click(object sender, EventArgs e)
         {
-            TextBoxUserNameVisable(false);
-            string userNameInput = this.textBoxUserName.Text;
-            this.textBoxUserName.Text = string.Empty;
+            TextBoxUserIdOrUserNameVisable(false);
+            string userIdOrUserNameInput = this.textBoxUserIdOrUserName.Text;
+            this.textBoxUserIdOrUserName.Text = string.Empty;
 
-            this.labelUserName.Text = userNameInput;
+            this.labelUserName.Text = userIdOrUserNameInput;
+            string userId = _checkInManager.FindNearlyUserId(userIdOrUserNameInput);
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                ConfirmCheckIn(userId, false);
+            }
+
             ResizeLabelUserName();
         }
 
         private void pictureBoxButtonYes_Click(object sender, EventArgs e)
         {
+            var face = _faceDetector.CurrentFace;
+            if (face != null)
+            {
+                ConfirmCheckIn(face.UserId, true);
+            }
+        }
 
+        private void ConfirmCheckIn(string userId, bool checkInByAI)
+        {
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var result = _checkInManager.CheckIn(userId, checkInByAI);
+                if (result == CheckIn.CheckInManager.CheckInStatusTypes.Unknown)
+                {
+                    SetLabelResult(string.Format("对不起，{0}不在签到列表中！", userId), 1);
+                }
+                else if (result == CheckIn.CheckInManager.CheckInStatusTypes.Failure)
+                {
+                    SetLabelResult(string.Format("对不起，发生未知错误!", userId), 1);
+                }
+                else if (result == CheckIn.CheckInManager.CheckInStatusTypes.Duplicate)
+                {
+                    var userCheckInInfo = _checkInManager.FindUserCheckInByFace(userId);
+                    if (userCheckInInfo != null)
+                    {
+                        SetLabelResult(string.Format("{0}已经于{1}签过到了，请勿重复签到!", userId, userCheckInInfo.CheckInDateTime.ToString("HH:MM:ss")), 3);
+                    }
+                }
+                else if (result == CheckIn.CheckInManager.CheckInStatusTypes.Success)
+                {
+                    SetLabelResult(string.Format("签到成功，欢迎光临 {0}!", userId), 0);
+                }
+            }
+            RefreshValues2UI();
         }
 
         private void timerForFaceDetect_Tick(object sender, EventArgs e)
         {
             RefreshFace2UI();
+            if (labelResultShowDateTime.AddSeconds(6) < DateTime.Now)
+            {
+                ResetLabelResult();
+            }
         }
     }
 }

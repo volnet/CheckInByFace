@@ -18,9 +18,13 @@ namespace CheckInbyFace.CheckIn
             CheckInbyFace.Objects.FaceDetectInfos fdis = GetFaceDetectInfos(
                 Configs.ConfigManager.DataCommunicateMode,
                 Configs.ConfigManager.DataCommunicateModeFileFileFullPath);
-            if (fdis == null)
+            if (fdis != null)
             {
-
+                CurrentFaces = fdis;
+                if (fdis.Faces != null && fdis.Faces.Count > 0)
+                {
+                    CurrentFace = fdis.Faces[0];
+                }
             }
             return fdis;
         }

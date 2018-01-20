@@ -1,12 +1,12 @@
 {
   "Faces": [
     {
-      "UserId": "user1",
-      "X": 175,
-      "Y": 135,
-      "Width": 161,
-      "Height": 170,
-      "ImagePath": "D:\\program\\github.com\\volnet\\CheckInByFace\\src\\data\\public\\samples\\frame1804.jpg"
+      "UserId": "user2",
+      "X": 63,
+      "Y": 103,
+      "Width": 133,
+      "Height": 118,
+      "ImagePath": "D:\\program\\github.com\\volnet\\CheckInByFace\\src\\data\\public\\samples\\frame26.jpg"
     }
   ]
 }

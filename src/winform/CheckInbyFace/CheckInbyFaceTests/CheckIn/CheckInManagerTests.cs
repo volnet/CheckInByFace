@@ -45,7 +45,7 @@ namespace CheckInbyFace.CheckIn.Tests
             Assert.AreEqual(result, CheckInManager.CheckInStatusTypes.Success);
             Assert.AreEqual(1, manager.CheckInCount);
 
-            result = manager.CheckIn("user3", true); 
+            result = manager.CheckIn("user3", true);
             Assert.AreEqual(result, CheckInManager.CheckInStatusTypes.Unknown);
             Assert.AreEqual(1, manager.CheckInCount);
         }
@@ -72,6 +72,36 @@ namespace CheckInbyFace.CheckIn.Tests
             Assert.AreEqual(2, manager.CheckInCount);
 
             Assert.AreEqual(2, manager.TotalCount);
+        }
+
+        [TestMethod()]
+        public void FindNearlyUserIdTest()
+        {
+            CheckInManager manager = new CheckInManager();
+
+            string userA = manager.FindNearlyUserId("user", true);
+            Assert.IsTrue(string.IsNullOrEmpty(userA));
+
+            string userB = manager.FindNearlyUserId("user", false);
+            Assert.AreEqual("user1", userB);
+
+            string userC = manager.FindNearlyUserId("user1", true);
+            Assert.AreEqual("user1", userC);
+
+            string userD = manager.FindNearlyUserId("user2", true);
+            Assert.AreEqual("user2", userD);
+
+            string userE = manager.FindNearlyUserId("user1", false);
+            Assert.AreEqual("user1", userE);
+
+            string userF = manager.FindNearlyUserId("user2", false);
+            Assert.AreEqual("user2", userF);
+
+            string userG = manager.FindNearlyUserId("user3", true);
+            Assert.IsTrue(string.IsNullOrEmpty(userG));
+
+            string userH = manager.FindNearlyUserId("user3", false);
+            Assert.IsTrue(string.IsNullOrEmpty(userH));
         }
     }
 }

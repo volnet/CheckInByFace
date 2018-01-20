@@ -38,11 +38,12 @@
             this.pictureBoxResultYes = new System.Windows.Forms.PictureBox();
             this.labelResultNo = new System.Windows.Forms.Label();
             this.labelResultYes = new System.Windows.Forms.Label();
-            this.textBoxUserName = new System.Windows.Forms.TextBox();
+            this.textBoxUserIdOrUserName = new System.Windows.Forms.TextBox();
             this.labelCheckinCount = new System.Windows.Forms.Label();
             this.labelUserName = new System.Windows.Forms.Label();
             this.pictureBoxButtonYes2 = new System.Windows.Forms.PictureBox();
             this.timerForFaceDetect = new System.Windows.Forms.Timer(this.components);
+            this.labelResult = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBackground)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHeadFrame)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxButtonYes)).BeginInit();
@@ -154,11 +155,11 @@
             // 
             // textBoxUserName
             // 
-            this.textBoxUserName.Font = new System.Drawing.Font("微软雅黑", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.textBoxUserName.Location = new System.Drawing.Point(695, 826);
-            this.textBoxUserName.Name = "textBoxUserName";
-            this.textBoxUserName.Size = new System.Drawing.Size(474, 85);
-            this.textBoxUserName.TabIndex = 8;
+            this.textBoxUserIdOrUserName.Font = new System.Drawing.Font("微软雅黑", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.textBoxUserIdOrUserName.Location = new System.Drawing.Point(695, 826);
+            this.textBoxUserIdOrUserName.Name = "textBoxUserName";
+            this.textBoxUserIdOrUserName.Size = new System.Drawing.Size(474, 85);
+            this.textBoxUserIdOrUserName.TabIndex = 8;
             // 
             // labelCheckinCount
             // 
@@ -200,8 +201,21 @@
             // 
             // timerForFaceDetect
             // 
-            this.timerForFaceDetect.Interval = 500;
+            this.timerForFaceDetect.Interval = 3000;
             this.timerForFaceDetect.Tick += new System.EventHandler(this.timerForFaceDetect_Tick);
+            // 
+            // labelResult
+            // 
+            this.labelResult.AutoSize = true;
+            this.labelResult.BackColor = System.Drawing.Color.Transparent;
+            this.labelResult.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelResult.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelResult.ForeColor = System.Drawing.Color.White;
+            this.labelResult.Location = new System.Drawing.Point(0, 967);
+            this.labelResult.Name = "labelResult";
+            this.labelResult.Size = new System.Drawing.Size(110, 42);
+            this.labelResult.TabIndex = 12;
+            this.labelResult.Text = "result";
             // 
             // MainForm
             // 
@@ -210,10 +224,11 @@
             this.BackgroundImage = global::CheckInbyFace.Properties.Resources.background;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1894, 1009);
+            this.Controls.Add(this.labelResult);
             this.Controls.Add(this.pictureBoxButtonYes2);
             this.Controls.Add(this.labelUserName);
             this.Controls.Add(this.labelCheckinCount);
-            this.Controls.Add(this.textBoxUserName);
+            this.Controls.Add(this.textBoxUserIdOrUserName);
             this.Controls.Add(this.labelResultYes);
             this.Controls.Add(this.labelResultNo);
             this.Controls.Add(this.pictureBoxResultYes);
@@ -250,11 +265,12 @@
         private System.Windows.Forms.PictureBox pictureBoxResultYes;
         private System.Windows.Forms.Label labelResultNo;
         private System.Windows.Forms.Label labelResultYes;
-        private System.Windows.Forms.TextBox textBoxUserName;
+        private System.Windows.Forms.TextBox textBoxUserIdOrUserName;
         private System.Windows.Forms.Label labelCheckinCount;
         private System.Windows.Forms.Label labelUserName;
         private System.Windows.Forms.PictureBox pictureBoxButtonYes2;
         private System.Windows.Forms.Timer timerForFaceDetect;
+        private System.Windows.Forms.Label labelResult;
     }
 }
 

@@ -120,6 +120,11 @@ namespace CheckInbyFace.CheckIn
                 try
                 {
                     UserCheckIn user = _userCheckInList[userId];
+                    if (user.CheckInStatus)
+                    {
+                        return CheckInStatusTypes.Duplicate;
+                    }
+
                     user.CheckInDateTime = DateTime.Now;
                     user.CheckInStatus = true;
 
@@ -154,12 +159,64 @@ namespace CheckInbyFace.CheckIn
         {
             get
             {
-                if (TotalCount == 0)
+                if (CheckInCount == 0)
                 {
                     return 0;
                 }
                 return 100 - CheckInByAdminPercent;
             }
+        }
+
+        public UserCheckIn FindUserCheckInByFace(string userId)
+        {
+            if (!string.IsNullOrEmpty(userId) && this.UserCheckInList != null && this.UserCheckInList.ContainsKey(userId))
+            {
+                return this.UserCheckInList[userId];
+            }
+            return null;
+        }
+
+        public string FindNearlyUserId(string userIdOrUserName, bool exactlyMatch = false)
+        {
+            if (_userCheckInList.ContainsKey(userIdOrUserName))
+            {
+                return userIdOrUserName;
+            }
+            else
+            {
+                var result = _userCheckInList.Values.FirstOrDefault<UserCheckIn>((u) =>
+                {
+                    if (u.User.UserId == userIdOrUserName)
+                    {
+                        return true;
+                    }
+                    return false;
+                });
+                if (result != null)
+                {
+                    return result.User.UserId;
+                }
+            }
+
+            if (!exactlyMatch)
+            {
+                string result = _userCheckInList.Keys.FirstOrDefault<string>((u)=> {
+                    return u.Contains(userIdOrUserName);
+                });
+                if (!string.IsNullOrEmpty(result))
+                {
+                    return result;
+                }
+
+                var result2 = _userCheckInList.Values.FirstOrDefault<UserCheckIn>((u)=> {
+                    return u.User.UserName.Contains(userIdOrUserName);
+                });
+                if (result2 != null)
+                {
+                    return result2.User.UserId;
+                }
+            }
+            return string.Empty;
         }
 
         public bool SaveToDisk()
@@ -185,7 +242,8 @@ namespace CheckInbyFace.CheckIn
         {
             Unknown,
             Success,
-            Failure
+            Failure,
+            Duplicate
         }
     }
 }

@@ -30,7 +30,7 @@ namespace CheckInbyFace.TestFrameGenerator
                 }
                 if (args.Length == 0 || mode == "CommunicateByFile")
                 {
-                    int minutes = 1;
+                    int minutes = 60;
                     string folderPath = string.Empty;
                     if (args.Length == 3)
                     {
@@ -114,6 +114,8 @@ namespace CheckInbyFace.TestFrameGenerator
                 {
                     _logger.Debug(ex.ToString());
                 }
+
+                System.Threading.Thread.Sleep(2000);
             }
         }
     }
