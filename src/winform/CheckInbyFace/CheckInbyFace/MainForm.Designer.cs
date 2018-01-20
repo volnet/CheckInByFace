@@ -153,11 +153,11 @@
             this.labelResultYes.TabIndex = 7;
             this.labelResultYes.Text = "0%";
             // 
-            // textBoxUserName
+            // textBoxUserIdOrUserName
             // 
             this.textBoxUserIdOrUserName.Font = new System.Drawing.Font("微软雅黑", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.textBoxUserIdOrUserName.Location = new System.Drawing.Point(695, 826);
-            this.textBoxUserIdOrUserName.Name = "textBoxUserName";
+            this.textBoxUserIdOrUserName.Name = "textBoxUserIdOrUserName";
             this.textBoxUserIdOrUserName.Size = new System.Drawing.Size(474, 85);
             this.textBoxUserIdOrUserName.TabIndex = 8;
             // 

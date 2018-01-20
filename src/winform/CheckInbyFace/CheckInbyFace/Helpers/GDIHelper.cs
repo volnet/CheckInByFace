@@ -94,7 +94,7 @@ namespace CheckInbyFace.Helpers
         /// </summary>
         /// <param name="imageBackground"></param>
         /// <param name="imageFront"></param>
-        /// <param name="imageFrontAlpha"></param>
+        /// <param name="imageFrontAlpha">0.1f ~ 1.0f</param>
         /// <param name="location"></param>
         /// <returns></returns>
         public static Image OverlayImage(Image imageBackground, Image imageFront, float imageFrontAlpha, Point location)
@@ -106,7 +106,9 @@ namespace CheckInbyFace.Helpers
                 return null;
             }
 
-            Bitmap bmPhoto = new Bitmap(imageBackground.Width, imageBackground.Height, PixelFormat.Format24bppRgb);
+            ImageAttributes attr = GetAlphaImgAttr((int)(imageFrontAlpha * 100));
+
+            Bitmap bmPhoto = new Bitmap(imageBackground.Width, imageBackground.Height, PixelFormat.Format32bppArgb);
             bmPhoto.SetResolution(imageBackground.HorizontalResolution, imageBackground.VerticalResolution);
 
             using (Graphics grPhoto = Graphics.FromImage(bmPhoto))
@@ -118,7 +120,8 @@ namespace CheckInbyFace.Helpers
                   0,
                   imageBackground.Width,
                   imageBackground.Height,
-                  GraphicsUnit.Pixel);
+                  GraphicsUnit.Pixel,
+                  attr);
             }
 
             Bitmap bmWatermark = new Bitmap(bmPhoto);
@@ -135,10 +138,32 @@ namespace CheckInbyFace.Helpers
                     0,
                     imageFront.Width,
                     imageFront.Height,
-                    GraphicsUnit.Pixel);
+                    GraphicsUnit.Pixel,
+                    attr);
             }
 
             return bmWatermark;
+        }
+
+        private static ImageAttributes GetAlphaImgAttr(int opcity)
+        {
+            if (opcity < 0 || opcity > 100)
+            {
+                throw new ArgumentOutOfRangeException("opcity: 0~100");
+            }
+            //颜色矩阵
+            float[][] matrixItems =
+            {
+                  new float[]{1,0,0,0,0},
+                  new float[]{0,1,0,0,0},
+                  new float[]{0,0,1,0,0},
+                  new float[]{0,0,0,(float)opcity / 100,0},
+                  new float[]{0,0,0,0,1}
+             };
+            ColorMatrix colorMatrix = new ColorMatrix(matrixItems);
+            ImageAttributes imageAtt = new ImageAttributes();
+            imageAtt.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+            return imageAtt;
         }
 
         public static Image OverlayImageWithCutEllipse(Image imageBackground,

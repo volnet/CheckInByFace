@@ -136,7 +136,9 @@
     <Content Include="UI\MainForm\button-yes-2.png" />
     <Content Include="UI\MainForm\result-no.png" />
     <Content Include="UI\MainForm\result-yes.png" />
-    <Content Include="UI\MainForm\head-frame.png" />
+    <Content Include="UI\MainForm\head-frame.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

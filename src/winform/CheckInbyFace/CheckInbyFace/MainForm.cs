@@ -28,6 +28,7 @@ namespace CheckInbyFace
             Helpers.UIHelper.SwitchFullScreen(this);
             TextBoxUserIdOrUserNameVisable(false);
             RefreshValues2UI();
+            RefreshFace2UI();
             ResetLabelResult();
             timerForFaceDetect.Start();
         }
@@ -65,11 +66,33 @@ namespace CheckInbyFace
 
                         if (System.IO.File.Exists(face.ImagePath))
                         {
-                            pictureBoxHeadFrame.Image = Image.FromFile(face.ImagePath);
+                            pictureBoxHeadFrame.Image = GetFaceImage(face);
                         }
                     }
                 }
             }
+        }
+
+        private Image GetFaceImage(Objects.FaceDetectInfos.FaceDetectInfo face)
+        {
+            if (face != null && System.IO.File.Exists(face.ImagePath))
+            {
+                //string userId = face.UserId;
+                //string saveFramesFolderFullPath = ConfigManager.SaveFramesFolderFullPath;
+                //string saveFrameRawFullPath = System.IO.Path.Combine(saveFramesFolderFullPath, userId + @"-raw.jpg");
+                //string saveFrameCutFullPath = System.IO.Path.Combine(saveFramesFolderFullPath, userId + @"-cut.jpg");
+                string image1Path = AppDomain.CurrentDomain.BaseDirectory + @"UI\MainForm\head-frame.png";
+
+                Image image1 = Image.FromFile(image1Path);
+                Image image2 = Image.FromFile(face.ImagePath);
+                
+                Image result = Helpers.GDIHelper.OverlayImageWithCutEllipse(image1, image2, new Rectangle(face.X, face.Y, face.Width, face.Height),
+                    1.0F, new Point(image1.Width / 7, image1.Height / 7), new Size(image1.Width / 7 * 5, image1.Height / 7 * 5),
+                    new Size(this.pictureBoxHeadFrame.Width, this.pictureBoxHeadFrame.Height));
+
+                return result;
+            }
+            return null;
         }
 
         /// <summary>
