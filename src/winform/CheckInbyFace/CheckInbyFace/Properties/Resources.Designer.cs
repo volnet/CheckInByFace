@@ -113,6 +113,26 @@ namespace CheckInbyFace.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap info_dark {
+            get {
+                object obj = ResourceManager.GetObject("info_dark", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap info_light {
+            get {
+                object obj = ResourceManager.GetObject("info_light", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap result_no {
             get {
                 object obj = ResourceManager.GetObject("result_no", resourceCulture);

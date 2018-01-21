@@ -134,6 +134,8 @@
     <Content Include="UI\MainForm\button-no.png" />
     <Content Include="UI\MainForm\button-yes.png" />
     <Content Include="UI\MainForm\button-yes-2.png" />
+    <Content Include="UI\MainForm\info-dark.png" />
+    <Content Include="UI\MainForm\info-light.png" />
     <Content Include="UI\MainForm\result-no.png" />
     <Content Include="UI\MainForm\result-yes.png" />
     <Content Include="UI\MainForm\head-frame.png">

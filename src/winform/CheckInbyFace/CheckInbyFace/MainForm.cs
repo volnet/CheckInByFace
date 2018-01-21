@@ -27,6 +27,7 @@ namespace CheckInbyFace
         {
             Helpers.UIHelper.SwitchFullScreen(this);
             TextBoxUserIdOrUserNameVisable(false);
+            LabelResultYesNoVisable(false);
             RefreshValues2UI();
             RefreshFace2UI();
             ResetLabelResult();
@@ -136,6 +137,14 @@ namespace CheckInbyFace
             this.pictureBoxButtonYes.Enabled = !visable;
         }
 
+        private void LabelResultYesNoVisable(bool visable)
+        {
+            this.labelResultNo.Visible = visable;
+            this.labelResultYes.Visible = visable;
+            this.pictureBoxResultNo.Visible = visable;
+            this.pictureBoxResultYes.Visible = visable;
+        }
+
         private const int SCREEN_WIDTH = 1920;
         private const int SCREEN_HEIGHT = 1080;
 
@@ -165,6 +174,9 @@ namespace CheckInbyFace
             this.pictureBoxButtonYes2.Height = this.textBoxUserIdOrUserName.Height - 12;
             this.pictureBoxButtonYes2.Left = this.textBoxUserIdOrUserName.Right - this.pictureBoxButtonYes2.Width - 6;
             this.pictureBoxButtonYes2.Top = this.textBoxUserIdOrUserName.Top + 6;
+
+            this.pictureBoxButtonInfomation.Top = this.ClientSize.Height - this.pictureBoxButtonInfomation.Height - 8;
+            this.pictureBoxButtonInfomation.Left = this.ClientSize.Width - this.pictureBoxButtonInfomation.Width - 8;
 
             ResizeLabelUserName();
             ResizeLabelCheckInCount();
@@ -275,6 +287,20 @@ namespace CheckInbyFace
             if (labelResultShowDateTime.AddSeconds(6) < DateTime.Now)
             {
                 ResetLabelResult();
+            }
+        }
+
+        private void pictureBoxButtonInfomation_Click(object sender, EventArgs e)
+        {
+            if (this.labelResultNo.Visible)
+            {
+                this.pictureBoxButtonInfomation.Image = global::CheckInbyFace.Properties.Resources.info_dark;
+                LabelResultYesNoVisable(false);
+            }
+            else
+            {
+                this.pictureBoxButtonInfomation.Image = global::CheckInbyFace.Properties.Resources.info_light;
+                LabelResultYesNoVisable(true);
             }
         }
     }

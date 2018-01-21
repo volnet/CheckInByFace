@@ -44,6 +44,7 @@
             this.pictureBoxButtonYes2 = new System.Windows.Forms.PictureBox();
             this.timerForFaceDetect = new System.Windows.Forms.Timer(this.components);
             this.labelResult = new System.Windows.Forms.Label();
+            this.pictureBoxButtonInfomation = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBackground)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHeadFrame)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxButtonYes)).BeginInit();
@@ -51,6 +52,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxResultNo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxResultYes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxButtonYes2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxButtonInfomation)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBoxBackground
@@ -217,6 +219,19 @@
             this.labelResult.TabIndex = 12;
             this.labelResult.Text = "result";
             // 
+            // pictureBoxButtonInfomation
+            // 
+            this.pictureBoxButtonInfomation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxButtonInfomation.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBoxButtonInfomation.Image = global::CheckInbyFace.Properties.Resources.info_dark;
+            this.pictureBoxButtonInfomation.Location = new System.Drawing.Point(1842, 957);
+            this.pictureBoxButtonInfomation.Name = "pictureBoxButtonInfomation";
+            this.pictureBoxButtonInfomation.Size = new System.Drawing.Size(40, 40);
+            this.pictureBoxButtonInfomation.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxButtonInfomation.TabIndex = 13;
+            this.pictureBoxButtonInfomation.TabStop = false;
+            this.pictureBoxButtonInfomation.Click += new System.EventHandler(this.pictureBoxButtonInfomation_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
@@ -224,6 +239,7 @@
             this.BackgroundImage = global::CheckInbyFace.Properties.Resources.background;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1894, 1009);
+            this.Controls.Add(this.pictureBoxButtonInfomation);
             this.Controls.Add(this.labelResult);
             this.Controls.Add(this.pictureBoxButtonYes2);
             this.Controls.Add(this.labelUserName);
@@ -250,6 +266,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxResultNo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxResultYes)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxButtonYes2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxButtonInfomation)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -271,6 +288,7 @@
         private System.Windows.Forms.PictureBox pictureBoxButtonYes2;
         private System.Windows.Forms.Timer timerForFaceDetect;
         private System.Windows.Forms.Label labelResult;
+        private System.Windows.Forms.PictureBox pictureBoxButtonInfomation;
     }
 }
 
