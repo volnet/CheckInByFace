@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>CheckInbyFace - CheckInResult</title>
+    <script type="text/javascript" src="scripts/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript">
+        function readResult() {
+            $.getJSON("checkin-result.json", function (data) {
+                if (data) {
+                    $("#TotalCount").text(data["TotalCount"]);
+                    $("#CheckInCount").text(data["CheckInCount"]);
+                    $("#CheckInByAICount").text(data["CheckInByAICount"]);
+                    $("#CheckInByAdminCount").text(data["CheckInByAdminCount"]);
+                    $("#CheckInByAdminPercent").text(data["CheckInByAdminPercent"] + "%");
+                    $("#CheckInByAIPercent").text(data["CheckInByAIPercent"] + "%");
+                    var i = 0;
+                    $("#usersDetails").html("<tr><th>No</th><th>UserId</th><th>UserName</th><th>Mobile</th><th>CheckInStatus</th><th>CheckInDateTime</th><th>CheckInByAI</th></tr>");
+                    $.each(data["Users"], function (index, value) {
+                        ++i;
+                        $("#usersDetails").append(
+                            "<tr><td>" + i.toString() + "</td><td>"
+                            + value["User"]["UserId"] + "</td><td>"
+                            + value["User"]["UserName"] + "</td><td>"
+                            + value["User"]["Mobile"] + "</td><td>"
+                            + value["CheckInStatus"] + "</td><td>"
+                            + value["CheckInDateTime"] + "</td><td>" 
+                            + value["CheckInByAI"] + "</td></tr>");
+                    });
+                }
+            });
+        }
+        $(window).ready(function () {
+            readResult();
+        });
+    </script>
+    <style type="text/css">
+        .title { font-weight:bold; }
+        table {
+            border-collapse: collapse;
+        }
+        table, th, tr, td {
+            border: 1px solid;
+        }
+    </style>
+</head>
+<body>
+    <h1>CheckInResult</h1>
+    <div>
+        <h2>Summary</h2>
+        <span class="title">TotalCount:</span><span id="TotalCount"></span><br />
+        <span class="title">CheckInCount:</span> <span id="CheckInCount"></span><br />
+        <span class="title">CheckInByAICount:</span><span id="CheckInByAICount"></span><br />
+        <span class="title">CheckInByAdminCount:</span> <span id="CheckInByAdminCount"></span><br />
+        <span class="title">CheckInByAdminPercent:</span> <span id="CheckInByAdminPercent"></span><br />
+        <span class="title">CheckInByAIPercent:</span> <span id="CheckInByAIPercent"></span><br />
+    </div>
+    <div>
+        <h2>Details</h2>
+        <table id="usersDetails">
+        </table>
+    </div>
+</body>
+</html>
