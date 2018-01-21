@@ -94,6 +94,7 @@
     <Compile Include="Shell.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="Data\checkin-result.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

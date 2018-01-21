@@ -240,6 +240,10 @@ namespace CheckInbyFace
             {
                 ConfirmCheckIn(userId, false);
             }
+            else
+            {
+                SetLabelResult(string.Format("对不起，{0}不在签到列表中！", userIdOrUserNameInput), 1);
+            }
 
             ResizeLabelUserName();
         }

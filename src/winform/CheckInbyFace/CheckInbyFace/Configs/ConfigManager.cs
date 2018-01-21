@@ -96,5 +96,18 @@ namespace CheckInbyFace.Configs
                 return _saveFramesFullPath;
             }
         }
+
+        private static string _checkInResultFullPath = string.Empty;
+        public static string CheckInResultFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_checkInResultFullPath))
+                {
+                    _checkInResultFullPath = System.IO.Path.Combine(ResultFolderFullPath, @"checkin-result.json");
+                }
+                return _checkInResultFullPath;
+            }
+        }
     }
 }

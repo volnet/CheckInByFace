@@ -45,20 +45,6 @@ namespace CheckInbyFace.CheckIn
             return _users;
         }
 
-        private const string CHECKIN_RESULT_FILE = @"Data\checkin-result.json";
-        private string _checkInResultFileFullPath = string.Empty;
-        private string CheckInResultFileFullPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_checkInResultFileFullPath))
-                {
-                    _checkInResultFileFullPath = System.IO.Path.GetFullPath(CHECKIN_RESULT_FILE);
-                }
-                return _checkInResultFileFullPath;
-            }
-        }
-
         private Objects.CheckInResult _checkInResult = null;
         public Objects.CheckInResult CheckInResult
         {
@@ -105,23 +91,23 @@ namespace CheckInbyFace.CheckIn
 
             // 2. recover data from history (if have).
             CheckInResult historyCheckInResult = null;
-            if (System.IO.File.Exists(CheckInResultFileFullPath))
+            if (System.IO.File.Exists(Configs.ConfigManager.CheckInResultFullPath))
             {
-                string json = System.IO.File.ReadAllText(CheckInResultFileFullPath);
+                string json = System.IO.File.ReadAllText(Configs.ConfigManager.CheckInResultFullPath);
                 if (string.IsNullOrEmpty(json))
                 {
-                    _logger.Warn(CheckInResultFileFullPath + " is empty.");
+                    _logger.Warn(Configs.ConfigManager.CheckInResultFullPath + " is empty.");
                 }
                 else
                 {
                     try
                     {
                         historyCheckInResult = JsonConvert.DeserializeObject<CheckInResult>(json);
-                        _logger.Info(CheckInResultFileFullPath + " loaded.");
+                        _logger.Info(Configs.ConfigManager.CheckInResultFullPath + " loaded.");
                     }
                     catch (Exception ex)
                     {
-                        _logger.Warn("load checkInResult with mistake. " + CheckInResultFileFullPath + " " + ex.ToString());
+                        _logger.Warn("load checkInResult with mistake. " + Configs.ConfigManager.CheckInResultFullPath + " " + ex.ToString());
                     }
                 }
             }
@@ -241,7 +227,7 @@ namespace CheckInbyFace.CheckIn
                 if (_checkInResult != null)
                 {
                     string json = JsonConvert.SerializeObject(_checkInResult, Formatting.Indented);
-                    System.IO.File.WriteAllText(this.CheckInResultFileFullPath, json, Encoding.UTF8);
+                    System.IO.File.WriteAllText(Configs.ConfigManager.CheckInResultFullPath, json, Encoding.UTF8);
                     return true;
                 }
             }
