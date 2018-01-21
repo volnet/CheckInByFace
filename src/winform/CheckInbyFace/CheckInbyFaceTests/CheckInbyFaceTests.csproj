@@ -94,6 +94,9 @@
     <Compile Include="Shell.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\checkin-result.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\users.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

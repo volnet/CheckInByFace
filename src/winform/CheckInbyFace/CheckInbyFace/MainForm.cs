@@ -40,9 +40,10 @@ namespace CheckInbyFace
 
         private void RefreshValues2UI()
         {
-            string checkInCount = string.Format("{0}/{1}", _checkInManager.CheckInCount, _checkInManager.TotalCount);
-            string resultNo = _checkInManager.CheckInByAdminPercent.ToString("0.00") + "%";
-            string resultYes = _checkInManager.CheckInByAIPercent.ToString("0.00") + "%";
+            string checkInCount = string.Format("{0}/{1}",
+                _checkInManager.CheckInResult.CheckInCount, _checkInManager.CheckInResult.TotalCount);
+            string resultNo = _checkInManager.CheckInResult.CheckInByAdminPercent.ToString("0.00") + "%";
+            string resultYes = _checkInManager.CheckInResult.CheckInByAIPercent.ToString("0.00") + "%";
 
             labelResultNo.Text = resultNo;
             labelResultYes.Text = resultYes;
@@ -59,7 +60,7 @@ namespace CheckInbyFace
                 string userId = face.UserId;
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    var user = face.RestoreUser(_checkInManager.UserCheckInList);
+                    var user = face.RestoreUser(_checkInManager.CheckInResult.Users);
                     if (user != null)
                     {
                         labelUserName.Text = string.Format("{0}({1})", user.UserName, user.UserId);
@@ -279,6 +280,7 @@ namespace CheckInbyFace
                 }
             }
             RefreshValues2UI();
+            _checkInManager.SaveToDisk();
         }
 
         private void timerForFaceDetect_Tick(object sender, EventArgs e)

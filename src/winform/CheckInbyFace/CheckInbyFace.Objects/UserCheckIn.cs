@@ -11,5 +11,6 @@ namespace CheckInbyFace.Objects
         public User User { get; set; }
         public bool CheckInStatus { get; set; }
         public DateTime CheckInDateTime { get; set; }
+        public bool CheckInByAI { get; set; }
     }
 }

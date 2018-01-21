@@ -13,12 +13,10 @@ namespace CheckInbyFace.CheckIn
         private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         public CheckInManager()
         {
-            LoadCheckInList();
-            ConvertToUserCheckInList();
+            InitOrRestoreCheckInResult();
         }
-        private List<User> _users = null;
+
         private const string CHECKIN_LIST_FILE = @"Data\users.json";
-        private const string CHECKIN_RESULT_FILE = @"Data\checkin-result.json";
         private string _checkInListFileFullPath = string.Empty;
         private string CheckInListFileFullPath
         {
@@ -31,8 +29,9 @@ namespace CheckInbyFace.CheckIn
                 return _checkInListFileFullPath;
             }
         }
-        private void LoadCheckInList()
+        private List<User> LoadCheckInList()
         {
+            List<User> _users = null;
             if (!System.IO.File.Exists(CheckInListFileFullPath))
             {
                 throw new ArgumentNullException(CheckInListFileFullPath + " not exists.");
@@ -43,24 +42,51 @@ namespace CheckInbyFace.CheckIn
             {
                 throw new ArgumentNullException("LoadCheckInList with exception, _list is null");
             }
+            return _users;
         }
 
-        private UserCheckInList _userCheckInList = null;
-        public UserCheckInList UserCheckInList
+        private const string CHECKIN_RESULT_FILE = @"Data\checkin-result.json";
+        private string _checkInResultFileFullPath = string.Empty;
+        private string CheckInResultFileFullPath
         {
             get
             {
-                return _userCheckInList;
+                if (string.IsNullOrEmpty(_checkInResultFileFullPath))
+                {
+                    _checkInResultFileFullPath = System.IO.Path.GetFullPath(CHECKIN_RESULT_FILE);
+                }
+                return _checkInResultFileFullPath;
             }
         }
-        private void ConvertToUserCheckInList()
+
+        private Objects.CheckInResult _checkInResult = null;
+        public Objects.CheckInResult CheckInResult
         {
-            if (_users != null)
+            get
             {
-                _userCheckInList = new UserCheckInList();
-                foreach (User user in _users)
+                return _checkInResult;
+            }
+            private set
+            {
+                _checkInResult = value;
+            }
+        }
+
+        private void InitOrRestoreCheckInResult()
+        {
+            // 1. create new checkInResult from users.json
+            CheckInResult newCheckInResult = null;
+            List<User> users = LoadCheckInList();
+            if (users != null)
+            {
+                newCheckInResult = new CheckInResult();
+                foreach (User user in users)
                 {
-                    if (!_userCheckInList.ContainsKey(user.UserId))
+                    if (newCheckInResult.Users == null)
+                    {
+                        newCheckInResult.Users = new UserCheckInList();
+                    }
+                    if (!newCheckInResult.Users.ContainsKey(user.UserId))
                     {
                         UserCheckIn userCheckIn = new UserCheckIn()
                         {
@@ -68,7 +94,7 @@ namespace CheckInbyFace.CheckIn
                             CheckInDateTime = DateTime.MinValue,
                             CheckInStatus = false
                         };
-                        _userCheckInList.Add(user.UserId, userCheckIn);
+                        newCheckInResult.Users.Add(user.UserId, userCheckIn);
                     }
                     else
                     {
@@ -76,42 +102,48 @@ namespace CheckInbyFace.CheckIn
                     }
                 }
             }
-        }
 
-        public int TotalCount
-        {
-            get
+            // 2. recover data from history (if have).
+            CheckInResult historyCheckInResult = null;
+            if (System.IO.File.Exists(CheckInResultFileFullPath))
             {
-                if (_userCheckInList == null)
-                    return 0;
-                return _userCheckInList.Count;
-            }
-        }
-
-        public int CheckInCount
-        {
-            get
-            {
-                if (_userCheckInList == null)
-                    return 0;
-                int i = 0;
-                foreach (UserCheckIn uci in _userCheckInList.Values)
+                string json = System.IO.File.ReadAllText(CheckInResultFileFullPath);
+                if (string.IsNullOrEmpty(json))
                 {
-                    if (uci.CheckInStatus)
-                        ++i;
+                    _logger.Warn(CheckInResultFileFullPath + " is empty.");
                 }
-                return i;
+                else
+                {
+                    try
+                    {
+                        historyCheckInResult = JsonConvert.DeserializeObject<CheckInResult>(json);
+                        _logger.Info(CheckInResultFileFullPath + " loaded.");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn("load checkInResult with mistake. " + CheckInResultFileFullPath + " " + ex.ToString());
+                    }
+                }
             }
-        }
 
-        private int _checkInByAdmin = 0;
-        private int _checkInByAI = 0;
-        public int CheckInByAdmin { get { return _checkInByAdmin; } }
-        public int CheckInByAI { get { return _checkInByAI; } }
+            if (historyCheckInResult != null && historyCheckInResult.Users != null)
+            {
+                foreach (var userCheckInPair in historyCheckInResult.Users)
+                {
+                    string userId = userCheckInPair.Key;
+                    if (newCheckInResult.Users.ContainsKey(userId))
+                    {
+                        newCheckInResult.Users[userId] = historyCheckInResult.Users[userId];
+                    }
+                }
+            }
+
+            this.CheckInResult = newCheckInResult;
+        }
 
         public CheckInStatusTypes CheckIn(string userId, bool checkInByAI)
         {
-            if (!_userCheckInList.ContainsKey(userId))
+            if (!_checkInResult.Users.ContainsKey(userId))
             {
                 return CheckInStatusTypes.Unknown;
             }
@@ -119,7 +151,7 @@ namespace CheckInbyFace.CheckIn
             {
                 try
                 {
-                    UserCheckIn user = _userCheckInList[userId];
+                    UserCheckIn user = _checkInResult.Users[userId];
                     if (user.CheckInStatus)
                     {
                         return CheckInStatusTypes.Duplicate;
@@ -130,11 +162,11 @@ namespace CheckInbyFace.CheckIn
 
                     if (checkInByAI)
                     {
-                        ++_checkInByAI;
+                        user.CheckInByAI = true;
                     }
                     else
                     {
-                        ++_checkInByAdmin;
+                        user.CheckInByAI = false;
                     }
 
                     return CheckInStatusTypes.Success;
@@ -147,44 +179,27 @@ namespace CheckInbyFace.CheckIn
             }
         }
 
-        public float CheckInByAdminPercent
-        {
-            get
-            {
-                return ((float)CheckInByAdmin / (float)TotalCount * 100);
-            }
-        }
-
-        public float CheckInByAIPercent
-        {
-            get
-            {
-                if (CheckInCount == 0)
-                {
-                    return 0;
-                }
-                return 100 - CheckInByAdminPercent;
-            }
-        }
-
         public UserCheckIn FindUserCheckInByFace(string userId)
         {
-            if (!string.IsNullOrEmpty(userId) && this.UserCheckInList != null && this.UserCheckInList.ContainsKey(userId))
+            if (!string.IsNullOrEmpty(userId) 
+                && _checkInResult != null
+                && _checkInResult.Users != null 
+                && _checkInResult.Users.ContainsKey(userId))
             {
-                return this.UserCheckInList[userId];
+                return _checkInResult.Users[userId];
             }
             return null;
         }
 
         public string FindNearlyUserId(string userIdOrUserName, bool exactlyMatch = false)
         {
-            if (_userCheckInList.ContainsKey(userIdOrUserName))
+            if (_checkInResult.Users.ContainsKey(userIdOrUserName))
             {
                 return userIdOrUserName;
             }
             else
             {
-                var result = _userCheckInList.Values.FirstOrDefault<UserCheckIn>((u) =>
+                var result = _checkInResult.Users.Values.FirstOrDefault<UserCheckIn>((u) =>
                 {
                     if (u.User.UserId == userIdOrUserName)
                     {
@@ -200,7 +215,7 @@ namespace CheckInbyFace.CheckIn
 
             if (!exactlyMatch)
             {
-                string result = _userCheckInList.Keys.FirstOrDefault<string>((u)=> {
+                string result = _checkInResult.Users.Keys.FirstOrDefault<string>((u)=> {
                     return u.Contains(userIdOrUserName);
                 });
                 if (!string.IsNullOrEmpty(result))
@@ -208,7 +223,7 @@ namespace CheckInbyFace.CheckIn
                     return result;
                 }
 
-                var result2 = _userCheckInList.Values.FirstOrDefault<UserCheckIn>((u)=> {
+                var result2 = _checkInResult.Users.Values.FirstOrDefault<UserCheckIn>((u)=> {
                     return u.User.UserName.Contains(userIdOrUserName);
                 });
                 if (result2 != null)
@@ -223,10 +238,10 @@ namespace CheckInbyFace.CheckIn
         {
             try
             {
-                if (_userCheckInList != null)
+                if (_checkInResult != null)
                 {
-                    string json = JsonConvert.SerializeObject(_userCheckInList, Formatting.Indented);
-                    System.IO.File.WriteAllText(CHECKIN_RESULT_FILE, json, Encoding.UTF8);
+                    string json = JsonConvert.SerializeObject(_checkInResult, Formatting.Indented);
+                    System.IO.File.WriteAllText(this.CheckInResultFileFullPath, json, Encoding.UTF8);
                     return true;
                 }
             }
