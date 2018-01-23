@@ -37,6 +37,7 @@ namespace CheckInbyFace
         private CheckIn.CheckInManager _checkInManager = new CheckIn.CheckInManager();
         private CheckIn.FaceDetector _faceDetector = new CheckIn.FaceDetector();
         private DateTime labelResultShowDateTime = DateTime.MinValue;
+        private bool _saving = false;
 
         private void RefreshValues2UI()
         {
@@ -79,10 +80,6 @@ namespace CheckInbyFace
         {
             if (face != null && System.IO.File.Exists(face.ImagePath))
             {
-                //string userId = face.UserId;
-                //string saveFramesFolderFullPath = ConfigManager.SaveFramesFolderFullPath;
-                //string saveFrameRawFullPath = System.IO.Path.Combine(saveFramesFolderFullPath, userId + @"-raw.jpg");
-                //string saveFrameCutFullPath = System.IO.Path.Combine(saveFramesFolderFullPath, userId + @"-cut.jpg");
                 string image1Path = AppDomain.CurrentDomain.BaseDirectory + @"UI\MainForm\head-frame.png";
 
                 Image image1 = Image.FromFile(image1Path);
@@ -101,7 +98,7 @@ namespace CheckInbyFace
         /// 
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="status">0:success, 1:error, 2:normal, 3:warning</param>
+        /// <param name="status">0:success, 1:error, 2:normal, 3:warn</param>
         private void SetLabelResult(string text, int status)
         {
             if (status == 0)
@@ -224,40 +221,90 @@ namespace CheckInbyFace
 
         private void pictureBoxButtonNo_Click(object sender, EventArgs e)
         {
-            TextBoxUserIdOrUserNameVisable(true);
+            if (textBoxUserIdOrUserName.Visible)
+            {
+                TextBoxUserIdOrUserNameVisable(false);
+            }
+            else
+            {
+                TextBoxUserIdOrUserNameVisable(true);
+            }
         }
 
         private void pictureBoxButtonYes2_Click(object sender, EventArgs e)
         {
-            TextBoxUserIdOrUserNameVisable(false);
-            string userIdOrUserNameInput = this.textBoxUserIdOrUserName.Text;
-            this.textBoxUserIdOrUserName.Text = string.Empty;
-
-            this.labelUserName.Text = userIdOrUserNameInput;
-            string userId = _checkInManager.FindNearlyUserId(userIdOrUserNameInput);
-
-            if (!string.IsNullOrEmpty(userId))
+            try
             {
-                ConfirmCheckIn(userId, false);
-            }
-            else
-            {
-                SetLabelResult(string.Format("对不起，{0}不在签到列表中！", userIdOrUserNameInput), 1);
-            }
+                if (!_saving)
+                {
+                    TextBoxUserIdOrUserNameVisable(false);
+                    string userIdOrUserNameInput = this.textBoxUserIdOrUserName.Text;
+                    this.textBoxUserIdOrUserName.Text = string.Empty;
 
-            ResizeLabelUserName();
+                    this.labelUserName.Text = userIdOrUserNameInput;
+                    string userId = _checkInManager.FindNearlyUserId(userIdOrUserNameInput);
+
+                    string faceRawFrameFullPath = "";
+                    Image cutImage = null;
+                    var face = _faceDetector.CurrentFace;
+                    if (face != null)
+                    {
+                        faceRawFrameFullPath = face.ImagePath;
+                        cutImage = this.pictureBoxHeadFrame.Image;
+                    }
+
+                    string result = string.Empty;
+                    if (userIdOrUserNameInput != userId)
+                    {
+                        result = "系统找不到：" + userIdOrUserNameInput + "已为您最佳匹配：" + userId + "。";
+                    }
+
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        ConfirmCheckIn(userId, false, faceRawFrameFullPath, cutImage);
+                    }
+                    else
+                    {
+                        SetLabelResult(string.Format("{0}{1}不在签到列表中！", result, userIdOrUserNameInput), 1);
+                    }
+
+                    ResizeLabelUserName();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug(ex.ToString());
+            }
+            finally
+            {
+                _saving = false;
+            }
         }
 
         private void pictureBoxButtonYes_Click(object sender, EventArgs e)
         {
-            var face = _faceDetector.CurrentFace;
-            if (face != null)
+            try
             {
-                ConfirmCheckIn(face.UserId, true);
+                if (!_saving)
+                {
+                    var face = _faceDetector.CurrentFace;
+                    if (face != null)
+                    {
+                        ConfirmCheckIn(face.UserId, true, face.ImagePath, this.pictureBoxHeadFrame.Image);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Debug(ex.ToString());
+            }
+            finally
+            {
+                _saving = false;
             }
         }
 
-        private void ConfirmCheckIn(string userId, bool checkInByAI)
+        private void ConfirmCheckIn(string userId, bool checkInByAI, string faceRawFrameFullPath = "", Image cutImage = null)
         {
             if (!string.IsNullOrEmpty(userId))
             {
@@ -281,18 +328,33 @@ namespace CheckInbyFace
                 else if (result == CheckIn.CheckInManager.CheckInStatusTypes.Success)
                 {
                     SetLabelResult(string.Format("签到成功，欢迎光临 {0}!", userId), 0);
+                    string rawFrame = string.Empty;
+                    string cutFrame = string.Empty;
+                    if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(faceRawFrameFullPath))
+                    {
+                        rawFrame = SaveFramesToDisk(userId, faceRawFrameFullPath);
+                    }
+                    if (!string.IsNullOrEmpty(userId) && cutImage != null)
+                    {
+                        cutFrame = SaveFrameCutsToDisk(userId, cutImage);
+                    }
+                    _checkInManager.CheckInResult.Users[userId].CheckInRawFrameFullPath = rawFrame;
+                    _checkInManager.CheckInResult.Users[userId].CheckInCutFrameFullPath = cutFrame;
+                    _checkInManager.SaveToDisk();
                 }
             }
             RefreshValues2UI();
-            _checkInManager.SaveToDisk();
         }
 
         private void timerForFaceDetect_Tick(object sender, EventArgs e)
         {
-            RefreshFace2UI();
-            if (labelResultShowDateTime.AddSeconds(6) < DateTime.Now)
+            if (!_saving)
             {
-                ResetLabelResult();
+                RefreshFace2UI();
+                if (labelResultShowDateTime.AddSeconds(6) < DateTime.Now)
+                {
+                    ResetLabelResult();
+                }
             }
         }
 
@@ -308,6 +370,66 @@ namespace CheckInbyFace
                 this.pictureBoxButtonInfomation.Image = global::CheckInbyFace.Properties.Resources.info_light;
                 LabelResultYesNoVisable(true);
             }
+        }
+
+        private string SaveFramesToDisk(string userId, string rawImagePath)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.Debug("userId isNullOrEmpty");
+            }
+            if (string.IsNullOrEmpty(rawImagePath))
+            {
+                _logger.Debug("rawImagePath == null");
+            }
+            if (!System.IO.File.Exists(rawImagePath))
+            {
+                _logger.Debug("rawImagePath not exists : " + rawImagePath);
+            }
+
+            string saveFramesFolderFullPath = ConfigManager.SaveFramesFolderFullPath;
+            string saveFrameRawFullPath = System.IO.Path.Combine(saveFramesFolderFullPath, userId + @"-raw.jpg");
+
+            try
+            {
+                _logger.Debug("copy file from " + rawImagePath + " to " + saveFrameRawFullPath);
+                System.IO.File.Copy(rawImagePath, saveFrameRawFullPath);
+                _logger.Debug("success");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("error");
+                _logger.Error(ex.ToString());
+            }
+            return saveFrameRawFullPath;
+        }
+
+        private string SaveFrameCutsToDisk(string userId, Image cutImage)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.Debug("userId isNullOrEmpty");
+            }
+            if (cutImage == null)
+            {
+                _logger.Debug("cutImage == null");
+            }
+            string saveFramesFolderFullPath = ConfigManager.SaveFramesFolderFullPath;
+            string saveFrameCutFullPath = System.IO.Path.Combine(saveFramesFolderFullPath, userId + @"-cut.jpg");
+
+            try
+            {
+                _logger.Debug("save file from " + " to " + saveFrameCutFullPath);
+                cutImage.Save(saveFrameCutFullPath);
+                _logger.Debug("success");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("error");
+                _logger.Error(ex.ToString());
+            }
+
+            return saveFrameCutFullPath;
         }
     }
 }

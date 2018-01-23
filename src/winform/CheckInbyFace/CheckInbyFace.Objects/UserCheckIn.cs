@@ -12,5 +12,7 @@ namespace CheckInbyFace.Objects
         public bool CheckInStatus { get; set; }
         public DateTime CheckInDateTime { get; set; }
         public bool CheckInByAI { get; set; }
+        public string CheckInRawFrameFullPath { get; set; }
+        public string CheckInCutFrameFullPath { get; set; }
     }
 }
