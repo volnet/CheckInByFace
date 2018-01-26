@@ -72,26 +72,58 @@ namespace CheckInbyFace
                             pictureBoxHeadFrame.Image = GetFaceImage(face);
                         }
                     }
+                    else
+                    {
+                        labelUserName.Text = "";
+                        SetLabelResult("欢迎光临，请正视摄像头，并保持微笑，系统将记录下这一美好瞬间。", 2);
+                        ResizeLabelUserName();
+                        pictureBoxHeadFrame.Image = GetFaceImage(null);
+                    }
                 }
             }
         }
 
         private Image GetFaceImage(Objects.FaceDetectInfos.FaceDetectInfo face)
         {
+            string image1Path = AppDomain.CurrentDomain.BaseDirectory + @"UI\MainForm\head-frame.png";
+
+            Image image1 = Image.FromFile(image1Path);
+            Image image2 = null;
+            Image result = null;
+            int x = 0;
+            int y = 0;
+            int width = 0;
+            int height = 0;
+
             if (face != null && System.IO.File.Exists(face.ImagePath))
             {
-                string image1Path = AppDomain.CurrentDomain.BaseDirectory + @"UI\MainForm\head-frame.png";
+                image2 = Image.FromFile(face.ImagePath);
 
-                Image image1 = Image.FromFile(image1Path);
-                Image image2 = Image.FromFile(face.ImagePath);
-                
-                Image result = Helpers.GDIHelper.OverlayImageWithCutEllipse(image1, image2, new Rectangle(face.X, face.Y, face.Width, face.Height),
+                x = face.X > 0 && face.X < image2.Width ? face.X : 0;
+                y = face.Y > 0 && face.Y < image2.Height ? face.Y : 0;
+                width = face.Width > 0 && (face.Width - x) < image2.Width ? face.Width : image2.Width - x;
+                height = face.Height > 0 && (face.Height - y) < image2.Height ? face.Height : image2.Height - y;
+            }
+            else
+            {
+                _logger.Debug("face == null or face.ImagePath not exists.");
+                string image2DefaultPath = AppDomain.CurrentDomain.BaseDirectory + @"UI\MainForm\default.png";
+                image2 = Image.FromFile(image2DefaultPath);
+
+                x = 0;
+                y = 0;
+                width = image2.Width;
+                height = image2.Height;
+            }
+
+            if (image1 != null && image2 != null & width > 0 && height > 0)
+            {
+                result = Helpers.GDIHelper.OverlayImageWithCutEllipse(image1, image2, new Rectangle(x, y, width, height),
                     1.0F, new Point(image1.Width / 7, image1.Height / 7), new Size(image1.Width / 7 * 5, image1.Height / 7 * 5),
                     new Size(this.pictureBoxHeadFrame.Width, this.pictureBoxHeadFrame.Height));
-
-                return result;
             }
-            return null;
+
+            return result;
         }
 
         /// <summary>
