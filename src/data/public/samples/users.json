@@ -1,0 +1,24 @@
+[
+  {
+    "UserId": "user1",
+    "UserName": "Eric User",
+    "Gender": 1,
+    "Birthday": "1960-11-11T00:00:00",
+    "FirstCome": "2010-03-20T00:00:00",
+    "Mobile": "123456789",
+    "Title": "Boss1",
+    "Remark": "${username}，职位是巴拉巴拉，来公司都${join-days}天了，每天都干嘛。刚刚你${face-expression}，有木有？",
+    "AvatarURI": "VP"
+  },
+  {
+    "UserId": "user2",
+    "UserName": "Frank User",
+    "Gender": 2,
+    "Birthday": "1961-12-12T00:00:00",
+    "FirstCome": "0001-01-01T00:00:00",
+    "Mobile": "987654321",
+    "Title": "Boss2",
+    "Remark": "${username}，职位是XYZ，来公司都${join-days}天了，每天都干嘛。刚刚你${face-expression}，有木有？",
+    "AvatarURI": "VP"
+  }
+]

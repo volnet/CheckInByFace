@@ -41,6 +41,7 @@ namespace CheckInbyFace.Configs
                 if (string.IsNullOrEmpty(_dataCommunicateModeFileFileFullPath))
                 {
                     _dataCommunicateModeFileFileFullPath = System.IO.Path.GetFullPath(DataCommunicateModeFileFilePath);
+                    _logger.Debug("DataCommunicateModeFileFileFullPath = " + _dataCommunicateModeFileFileFullPath);
                 }
                 return _dataCommunicateModeFileFileFullPath;
             }
@@ -62,6 +63,7 @@ namespace CheckInbyFace.Configs
                 if (string.IsNullOrEmpty(_resultFolderFullPath))
                 {
                     _resultFolderFullPath = System.IO.Path.GetFullPath(ResultFolderPath);
+                    _logger.Debug("ResultFolderFullPath = " + _resultFolderFullPath);
                 }
                 return _resultFolderFullPath;
             }
@@ -92,6 +94,7 @@ namespace CheckInbyFace.Configs
                             _logger.Debug(ex.ToString());
                         }
                     }
+                    _logger.Debug("SaveFramesFolderFullPath = " + _saveFramesFullPath);
                 }
                 return _saveFramesFullPath;
             }
@@ -105,6 +108,7 @@ namespace CheckInbyFace.Configs
                 if (string.IsNullOrEmpty(_checkInResultFullPath))
                 {
                     _checkInResultFullPath = System.IO.Path.Combine(ResultFolderFullPath, @"checkin-result.json");
+                    _logger.Debug("CheckInResultFullPath = " +_checkInResultFullPath);
                 }
                 return _checkInResultFullPath;
             }
